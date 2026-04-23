@@ -3,11 +3,15 @@
 # MAGIC # Cleanup: Remove All Demo Assets
 # MAGIC
 # MAGIC This notebook removes **everything** created by the Insurance Risk & Security demo:
-# MAGIC - 6 Delta tables
+# MAGIC - 8 Delta tables
 # MAGIC - 2 AI/BI Dashboards
 # MAGIC - 2 Genie Spaces
+# MAGIC - 1 Model Serving endpoint
+# MAGIC - 1 Vector Search index + endpoint
+# MAGIC - 1 Registered ML model
+# MAGIC - 1 Databricks App
 # MAGIC
-# MAGIC **Set the same CATALOG and SCHEMA you used during setup**, then click Run All.
+# MAGIC **Set the same CATALOG, SCHEMA, and WORKSPACE_FOLDER you used during setup**, then click Run All.
 
 # COMMAND ----------
 
@@ -20,9 +24,7 @@ SCHEMA = dbutils.widgets.get("SCHEMA")
 WORKSPACE_FOLDER = dbutils.widgets.get("WORKSPACE_FOLDER")
 TABLE_PREFIX = f"{CATALOG}.{SCHEMA}"
 
-print(f"Will clean up all demo_* assets in: {TABLE_PREFIX}")
-if WORKSPACE_FOLDER:
-    print(f"Will search for dashboards/Genie spaces in: {WORKSPACE_FOLDER}")
+print(f"Will clean up all demo assets in: {TABLE_PREFIX}")
 
 # COMMAND ----------
 
@@ -47,6 +49,8 @@ TABLES = [
     "demo_security_incidents",
     "demo_security_alerts",
     "demo_security_metrics",
+    "demo_policy_documents",
+    "demo_policy_chunks",
 ]
 
 for table_name in TABLES:
@@ -57,7 +61,7 @@ for table_name in TABLES:
     except Exception as e:
         print(f"  Skipped {fqn}: {e}")
 
-print("\nAll tables dropped.")
+print(f"\n{len(TABLES)} tables dropped.")
 
 # COMMAND ----------
 
@@ -71,7 +75,6 @@ DASHBOARD_NAMES = {
     "Security Incident Analytics",
 }
 
-# List all dashboards and find ours by name
 page_token = None
 deleted_dashboards = 0
 
@@ -117,7 +120,6 @@ GENIE_NAMES = {
     "Security Threat Explorer",
 }
 
-# List Genie spaces and find ours by name
 resp = requests.get(f"{workspace_url}/api/2.0/data-rooms", headers=headers)
 genie_data = resp.json()
 deleted_genies = 0
@@ -143,6 +145,94 @@ else:
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ## Step 4: Delete Model Serving Endpoint
+
+# COMMAND ----------
+
+endpoint_name = "demo-fraud-scoring"
+resp = requests.delete(
+    f"{workspace_url}/api/2.0/serving-endpoints/{endpoint_name}",
+    headers=headers,
+)
+if resp.status_code in (200, 204):
+    print(f"  Deleted serving endpoint: {endpoint_name}")
+elif resp.status_code == 404:
+    print(f"  Serving endpoint '{endpoint_name}' not found (already cleaned up?)")
+else:
+    print(f"  Failed to delete serving endpoint: {resp.text}")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Step 5: Delete Vector Search Index & Endpoint
+
+# COMMAND ----------
+
+vs_index_name = f"{TABLE_PREFIX}.demo_policy_chunks_index"
+vs_endpoint_name = "demo-vs-endpoint"
+
+# Delete the index first
+resp = requests.delete(
+    f"{workspace_url}/api/2.0/vector-search/indexes/{vs_index_name}",
+    headers=headers,
+)
+if resp.status_code in (200, 204):
+    print(f"  Deleted vector search index: {vs_index_name}")
+elif resp.status_code == 404:
+    print(f"  Vector search index not found (already cleaned up?)")
+else:
+    print(f"  Failed to delete VS index: {resp.text}")
+
+# Delete the endpoint
+resp = requests.delete(
+    f"{workspace_url}/api/2.0/vector-search/endpoints/{vs_endpoint_name}",
+    headers=headers,
+)
+if resp.status_code in (200, 204):
+    print(f"  Deleted vector search endpoint: {vs_endpoint_name}")
+elif resp.status_code == 404:
+    print(f"  Vector search endpoint not found (already cleaned up?)")
+else:
+    print(f"  Failed to delete VS endpoint: {resp.text}")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Step 6: Delete Registered ML Model
+
+# COMMAND ----------
+
+model_name = f"{TABLE_PREFIX}.demo_fraud_model"
+try:
+    from mlflow import MlflowClient
+    client = MlflowClient(registry_uri="databricks-uc")
+    client.delete_registered_model(name=model_name)
+    print(f"  Deleted registered model: {model_name}")
+except Exception as e:
+    print(f"  Could not delete model '{model_name}': {e}")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Step 7: Delete Databricks App
+
+# COMMAND ----------
+
+app_name = "risk-security-demo"
+resp = requests.delete(
+    f"{workspace_url}/api/2.0/apps/{app_name}",
+    headers=headers,
+)
+if resp.status_code in (200, 204):
+    print(f"  Deleted app: {app_name}")
+elif resp.status_code == 404:
+    print(f"  App '{app_name}' not found (already cleaned up?)")
+else:
+    print(f"  Failed to delete app: {resp.text}")
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## Summary
 
 # COMMAND ----------
@@ -151,9 +241,13 @@ print("=" * 70)
 print("  CLEANUP COMPLETE")
 print("=" * 70)
 print()
-print(f"  Tables dropped:       {len(TABLES)}")
-print(f"  Dashboards deleted:   {deleted_dashboards}")
-print(f"  Genie spaces deleted: {deleted_genies}")
+print(f"  Tables dropped:              {len(TABLES)}")
+print(f"  Dashboards deleted:          {deleted_dashboards}")
+print(f"  Genie spaces deleted:        {deleted_genies}")
+print(f"  Model Serving endpoint:      deleted")
+print(f"  Vector Search index/endpoint: deleted")
+print(f"  Registered ML model:         deleted")
+print(f"  Databricks App:              deleted")
 print()
 print("  All demo assets have been removed.")
 print("=" * 70)

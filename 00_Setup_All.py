@@ -5,12 +5,15 @@
 # MAGIC **One-click setup** for the Insurance Risk & Security demo.
 # MAGIC
 # MAGIC This notebook creates:
-# MAGIC - **6 Delta tables** (claims fraud + security incidents data)
+# MAGIC - **8 Delta tables** (claims fraud + security incidents + policy documents)
 # MAGIC - **2 AI/BI Dashboards** (Claims Fraud Risk Analytics, Security Incident Analytics)
 # MAGIC - **2 Genie Spaces** (Claims Fraud Explorer, Security Threat Explorer)
+# MAGIC - **1 ML Model** trained and deployed to a Model Serving endpoint
+# MAGIC - **1 Vector Search index** over policy documents for RAG
+# MAGIC - **1 Databricks App** with Fraud Scoring + Compliance Copilot
 # MAGIC
 # MAGIC ## Instructions
-# MAGIC 1. Set the **CATALOG** and **SCHEMA** widgets above to your target location
+# MAGIC 1. Set the **CATALOG**, **SCHEMA**, and **WORKSPACE_FOLDER** widgets above
 # MAGIC 2. Click **Run All**
 # MAGIC 3. Links to all created assets will be printed at the end
 # MAGIC
@@ -63,6 +66,37 @@ else:
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ## Step 4: Train & Deploy Fraud Scoring Model
+
+# COMMAND ----------
+
+# MAGIC %run ./05_Train_Deploy_Model
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Step 5: Setup RAG Pipeline (Policy Documents + Vector Search)
+
+# COMMAND ----------
+
+# MAGIC %run ./06_Setup_RAG_Pipeline
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Step 6: Deploy the Demo App
+
+# COMMAND ----------
+
+# MAGIC %run ./07_Deploy_App
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## Setup Complete!
 # MAGIC
-# MAGIC All assets have been created. Check the output above for direct links to your dashboards and Genie spaces.
+# MAGIC All assets have been created. Check the output above for direct links to:
+# MAGIC - AI/BI Dashboards
+# MAGIC - Genie Spaces
+# MAGIC - Model Serving endpoint
+# MAGIC - Demo App (Fraud Scoring + Compliance Copilot)
