@@ -10,6 +10,7 @@ import requests
 
 CATALOG = dbutils.widgets.get("CATALOG")
 SCHEMA = dbutils.widgets.get("SCHEMA")
+WORKSPACE_FOLDER = dbutils.widgets.get("WORKSPACE_FOLDER")
 TABLE_PREFIX = f"{CATALOG}.{SCHEMA}"
 
 # Get workspace URL and token from notebook context
@@ -18,8 +19,23 @@ workspace_url = f"https://{ctx.browserHostName().get()}"
 token = ctx.apiToken().get()
 headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
+# Determine where to place dashboards and Genie spaces
+if WORKSPACE_FOLDER:
+    asset_folder = WORKSPACE_FOLDER.rstrip("/")
+    # Ensure the folder exists
+    requests.post(
+        f"{workspace_url}/api/2.0/workspace/mkdirs",
+        headers=headers,
+        json={"path": asset_folder}
+    )
+else:
+    user_resp = requests.get(f"{workspace_url}/api/2.0/preview/scim/v2/Me", headers=headers)
+    user_name = user_resp.json().get("userName", "")
+    asset_folder = f"/Users/{user_name}"
+
 print(f"Workspace: {workspace_url}")
 print(f"Table prefix: {TABLE_PREFIX}")
+print(f"Asset folder: {asset_folder}")
 
 # COMMAND ----------
 
@@ -68,15 +84,10 @@ CLAIMS_DASHBOARD_JSON = """{"datasets": [{"name": "ds_kpi", "displayName": "KPI 
 
 serialized = replace_table_refs(CLAIMS_DASHBOARD_JSON, TABLE_PREFIX)
 
-# Get current user for path
-user_resp = requests.get(f"{workspace_url}/api/2.0/preview/scim/v2/Me", headers=headers)
-user_name = user_resp.json().get("userName", "")
-dashboard_path = f"/Users/{user_name}"
-
 payload = {
     "display_name": "Prudential HK - Claims Fraud Risk Analytics",
     "serialized_dashboard": serialized,
-    "parent_path": dashboard_path,
+    "parent_path": asset_folder,
     "warehouse_id": warehouse_id,
 }
 
@@ -114,7 +125,7 @@ serialized = replace_table_refs(SECURITY_DASHBOARD_JSON, TABLE_PREFIX)
 payload = {
     "display_name": "Prudential HK - Security Incident Analytics",
     "serialized_dashboard": serialized,
-    "parent_path": dashboard_path,
+    "parent_path": asset_folder,
     "warehouse_id": warehouse_id,
 }
 

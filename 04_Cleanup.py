@@ -13,12 +13,16 @@
 
 dbutils.widgets.text("CATALOG", "users", "Catalog")
 dbutils.widgets.text("SCHEMA", "jk_wong", "Schema")
+dbutils.widgets.text("WORKSPACE_FOLDER", "", "Workspace Folder (same as setup)")
 
 CATALOG = dbutils.widgets.get("CATALOG")
 SCHEMA = dbutils.widgets.get("SCHEMA")
+WORKSPACE_FOLDER = dbutils.widgets.get("WORKSPACE_FOLDER")
 TABLE_PREFIX = f"{CATALOG}.{SCHEMA}"
 
 print(f"Will clean up all prudential_* assets in: {TABLE_PREFIX}")
+if WORKSPACE_FOLDER:
+    print(f"Will search for dashboards/Genie spaces in: {WORKSPACE_FOLDER}")
 
 # COMMAND ----------
 

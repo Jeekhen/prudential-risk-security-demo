@@ -20,12 +20,18 @@
 
 dbutils.widgets.text("CATALOG", "users", "Catalog")
 dbutils.widgets.text("SCHEMA", "jk_wong", "Schema")
+dbutils.widgets.text("WORKSPACE_FOLDER", "", "Workspace Folder (e.g. /Users/me@company.com/Demos)")
 
 CATALOG = dbutils.widgets.get("CATALOG")
 SCHEMA = dbutils.widgets.get("SCHEMA")
+WORKSPACE_FOLDER = dbutils.widgets.get("WORKSPACE_FOLDER")
 
 print(f"Target: {CATALOG}.{SCHEMA}")
 print(f"All tables will be created as {CATALOG}.{SCHEMA}.prudential_*")
+if WORKSPACE_FOLDER:
+    print(f"Dashboards & Genie spaces will be created in: {WORKSPACE_FOLDER}")
+else:
+    print(f"Dashboards & Genie spaces will be created in your home folder (default)")
 
 # COMMAND ----------
 

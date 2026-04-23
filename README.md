@@ -24,6 +24,7 @@ One-click setup for a Databricks demo showcasing **AI/BI Dashboards** and **Geni
 3. **Set widgets** at the top:
    - `CATALOG` — your Unity Catalog catalog (e.g., `users`)
    - `SCHEMA` — your schema (e.g., `my_name`)
+   - `WORKSPACE_FOLDER` — where to place dashboards & Genie spaces (e.g., `/Users/me@company.com/Demos`). Leave blank to use your home folder.
 4. **Attach** to any cluster (DBR 14.3+)
 5. **Run All**
 6. Links to all dashboards and Genie spaces will be printed at the end
