@@ -35,6 +35,14 @@ One-click setup for a Databricks demo showcasing **AI/BI Dashboards** and **Geni
 - Cluster with DBR 14.3+ (for `numpy`, `pandas`)
 - Permissions to create tables in the target catalog/schema
 
+## Cleanup
+
+When you're done with the demo, run `04_Cleanup` to remove all created assets:
+
+1. **Open** `04_Cleanup` notebook
+2. **Set the same CATALOG and SCHEMA** you used during setup
+3. **Run All** — drops all 6 tables, deletes both dashboards, and deletes both Genie spaces
+
 ## Demo Narrative
 
 ### For Risk Team (Claims Fraud)
