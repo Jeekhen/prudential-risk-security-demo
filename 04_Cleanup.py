@@ -2,7 +2,7 @@
 # MAGIC %md
 # MAGIC # Cleanup: Remove All Demo Assets
 # MAGIC
-# MAGIC This notebook removes **everything** created by the Prudential HK Risk & Security demo:
+# MAGIC This notebook removes **everything** created by the Insurance Risk & Security demo:
 # MAGIC - 6 Delta tables
 # MAGIC - 2 AI/BI Dashboards
 # MAGIC - 2 Genie Spaces
@@ -20,7 +20,7 @@ SCHEMA = dbutils.widgets.get("SCHEMA")
 WORKSPACE_FOLDER = dbutils.widgets.get("WORKSPACE_FOLDER")
 TABLE_PREFIX = f"{CATALOG}.{SCHEMA}"
 
-print(f"Will clean up all prudential_* assets in: {TABLE_PREFIX}")
+print(f"Will clean up all demo_* assets in: {TABLE_PREFIX}")
 if WORKSPACE_FOLDER:
     print(f"Will search for dashboards/Genie spaces in: {WORKSPACE_FOLDER}")
 
@@ -41,12 +41,12 @@ headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json
 # COMMAND ----------
 
 TABLES = [
-    "prudential_claims_providers",
-    "prudential_claims_raw",
-    "prudential_claims_fraud_scores",
-    "prudential_security_incidents",
-    "prudential_security_alerts",
-    "prudential_security_metrics",
+    "demo_claims_providers",
+    "demo_claims_raw",
+    "demo_claims_fraud_scores",
+    "demo_security_incidents",
+    "demo_security_alerts",
+    "demo_security_metrics",
 ]
 
 for table_name in TABLES:
@@ -67,8 +67,8 @@ print("\nAll tables dropped.")
 # COMMAND ----------
 
 DASHBOARD_NAMES = {
-    "Prudential HK - Claims Fraud Risk Analytics",
-    "Prudential HK - Security Incident Analytics",
+    "Claims Fraud Risk Analytics",
+    "Security Incident Analytics",
 }
 
 # List all dashboards and find ours by name
@@ -113,8 +113,8 @@ else:
 # COMMAND ----------
 
 GENIE_NAMES = {
-    "Prudential HK - Claims Fraud Explorer",
-    "Prudential HK - Security Threat Explorer",
+    "Claims Fraud Explorer",
+    "Security Threat Explorer",
 }
 
 # List Genie spaces and find ours by name
@@ -155,5 +155,5 @@ print(f"  Tables dropped:       {len(TABLES)}")
 print(f"  Dashboards deleted:   {deleted_dashboards}")
 print(f"  Genie spaces deleted: {deleted_genies}")
 print()
-print("  All Prudential HK demo assets have been removed.")
+print("  All demo assets have been removed.")
 print("=" * 70)

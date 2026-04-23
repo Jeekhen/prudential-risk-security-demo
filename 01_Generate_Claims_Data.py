@@ -1,14 +1,14 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC # Generate Claims Fraud Data
-# MAGIC Creates 3 tables: `prudential_claims_providers`, `prudential_claims_raw`, `prudential_claims_fraud_scores`
+# MAGIC Creates 3 tables: `demo_claims_providers`, `demo_claims_raw`, `demo_claims_fraud_scores`
 
 # COMMAND ----------
 
 CATALOG = dbutils.widgets.get("CATALOG")
 SCHEMA = dbutils.widgets.get("SCHEMA")
 TABLE_PREFIX = f"{CATALOG}.{SCHEMA}"
-print(f"Writing to: {TABLE_PREFIX}.prudential_claims_*")
+print(f"Writing to: {TABLE_PREFIX}.demo_claims_*")
 
 # COMMAND ----------
 
@@ -257,9 +257,9 @@ print(f"Risk categories:\n{fraud_scores_pdf['risk_category'].value_counts().to_s
 # COMMAND ----------
 
 tables = [
-    ("prudential_claims_providers", providers_pdf),
-    ("prudential_claims_raw", claims_pdf),
-    ("prudential_claims_fraud_scores", fraud_scores_pdf),
+    ("demo_claims_providers", providers_pdf),
+    ("demo_claims_raw", claims_pdf),
+    ("demo_claims_fraud_scores", fraud_scores_pdf),
 ]
 
 for table_name, pdf in tables:

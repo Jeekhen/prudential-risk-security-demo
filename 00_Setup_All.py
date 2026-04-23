@@ -1,8 +1,8 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Prudential HK - Risk & Security AI Demo Setup
+# MAGIC # Insurance Risk & Security AI Demo Setup
 # MAGIC
-# MAGIC **One-click setup** for the Prudential HK Risk & Security demo.
+# MAGIC **One-click setup** for the Insurance Risk & Security demo.
 # MAGIC
 # MAGIC This notebook creates:
 # MAGIC - **6 Delta tables** (claims fraud + security incidents data)
@@ -27,7 +27,7 @@ SCHEMA = dbutils.widgets.get("SCHEMA")
 WORKSPACE_FOLDER = dbutils.widgets.get("WORKSPACE_FOLDER")
 
 print(f"Target: {CATALOG}.{SCHEMA}")
-print(f"All tables will be created as {CATALOG}.{SCHEMA}.prudential_*")
+print(f"All tables will be created as {CATALOG}.{SCHEMA}.demo_*")
 if WORKSPACE_FOLDER:
     print(f"Dashboards & Genie spaces will be created in: {WORKSPACE_FOLDER}")
 else:

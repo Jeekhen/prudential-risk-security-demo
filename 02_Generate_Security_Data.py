@@ -1,14 +1,14 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC # Generate Security Incidents Data
-# MAGIC Creates 3 tables: `prudential_security_incidents`, `prudential_security_alerts`, `prudential_security_metrics`
+# MAGIC Creates 3 tables: `demo_security_incidents`, `demo_security_alerts`, `demo_security_metrics`
 
 # COMMAND ----------
 
 CATALOG = dbutils.widgets.get("CATALOG")
 SCHEMA = dbutils.widgets.get("SCHEMA")
 TABLE_PREFIX = f"{CATALOG}.{SCHEMA}"
-print(f"Writing to: {TABLE_PREFIX}.prudential_security_*")
+print(f"Writing to: {TABLE_PREFIX}.demo_security_*")
 
 # COMMAND ----------
 
@@ -301,9 +301,9 @@ print(f"Metrics: {len(metrics_pdf)} rows")
 # COMMAND ----------
 
 tables_to_write = [
-    ("prudential_security_incidents", incidents_pdf),
-    ("prudential_security_alerts", alerts_pdf),
-    ("prudential_security_metrics", metrics_pdf),
+    ("demo_security_incidents", incidents_pdf),
+    ("demo_security_alerts", alerts_pdf),
+    ("demo_security_metrics", metrics_pdf),
 ]
 
 for table_name, pdf in tables_to_write:
